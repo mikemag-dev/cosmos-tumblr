@@ -39,3 +39,7 @@ struct BlogPostsView: View {
         }
     }
 }
+
+#Preview {
+    BlogPostsView()
+}

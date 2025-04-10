@@ -1,9 +1,11 @@
 import Foundation
 import Combine
+import Dependencies
 
 @MainActor
 @Observable
 class BlogPostsViewModel {
+    @ObservationIgnored @Dependency(\.tumblrClient) private var tumblrClient
 
     enum Action {
         case fetchPosts
@@ -14,10 +16,6 @@ class BlogPostsViewModel {
         case loaded
         case error(String)
     }
-    
-    // MARK: - Properties
-
-    private let dataProvider: TumblrDataProvidable
 
     private(set) var imageURLs: [URL] = []
     private(set) var state: State = .loaded
@@ -25,8 +23,7 @@ class BlogPostsViewModel {
 
     // MARK: - Initialization
 
-    init(blogId: String, dataProvider: TumblrDataProvidable = TumblrDataProvider()) {
-        self.dataProvider = dataProvider
+    init(blogId: String) {
         self.blogId = blogId
         Task {
             await send(action: .fetchPosts)
@@ -53,7 +50,7 @@ class BlogPostsViewModel {
 
         do {
             print("fetching posts")
-            let posts = try await dataProvider.getPosts(blogId: blogId).response.posts
+            let posts = try await tumblrClient.getPostsForBlogId(blogId).response.posts
             print("Successfully fetched \(posts.count) posts.")
 
             let extractedURLs = extractImageURLs(from: posts)

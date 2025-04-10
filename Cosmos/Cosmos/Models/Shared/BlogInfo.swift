@@ -24,23 +24,4 @@ struct BlogInfo: Decodable, Identifiable {
     let updated: TimeInterval // Unix timestamp -> TimeInterval/Date
     let url: URL
     let uuid: String
-
-    enum CodingKeys: String, CodingKey {
-        case ask
-        case askAnon = "ask_anon"
-        case askPageTitle = "ask_page_title"
-        case asksAllowMedia = "asks_allow_media"
-        case avatar
-        case canChat = "can_chat"
-        case canSubscribe = "can_subscribe"
-        case description
-        case isNsfw = "is_nsfw"
-        case likes, name, posts
-        case shareLikes = "share_likes"
-        case subscribed
-        case themeId = "theme_id"
-        case theme, title
-        case totalPosts = "total_posts"
-        case updated, url, uuid
-    }
 }

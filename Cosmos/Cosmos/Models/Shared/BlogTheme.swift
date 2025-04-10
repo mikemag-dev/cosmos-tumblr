@@ -24,27 +24,27 @@ struct BlogTheme: Decodable {
     let titleFontWeight: String?
 
     enum CodingKeys: String, CodingKey {
-        case headerFullWidth = "header_full_width"
-        case headerFullHeight = "header_full_height"
-        case headerFocusWidth = "header_focus_width"
-        case headerFocusHeight = "header_focus_height"
-        case avatarShape = "avatar_shape"
-        case backgroundColor = "background_color"
-        case bodyFont = "body_font"
-        case headerBounds = "header_bounds"
-        case headerImage = "header_image"
-        case headerImageFocused = "header_image_focused"
-        case headerImagePoster = "header_image_poster"
-        case headerImageScaled = "header_image_scaled"
-        case headerStretch = "header_stretch"
-        case linkColor = "link_color"
-        case showAvatar = "show_avatar"
-        case showDescription = "show_description"
-        case showHeaderImage = "show_header_image"
-        case showTitle = "show_title"
-        case titleColor = "title_color"
-        case titleFont = "title_font"
-        case titleFontWeight = "title_font_weight"
+        case headerFullWidth
+        case headerFullHeight
+        case headerFocusWidth
+        case headerFocusHeight
+        case avatarShape
+        case backgroundColor
+        case bodyFont
+        case headerBounds
+        case headerImage
+        case headerImageFocused
+        case headerImagePoster
+        case headerImageScaled
+        case headerStretch
+        case linkColor
+        case showAvatar
+        case showDescription
+        case showHeaderImage
+        case showTitle
+        case titleColor
+        case titleFont
+        case titleFontWeight
     }
 
      // Handle potentially empty string for URLs

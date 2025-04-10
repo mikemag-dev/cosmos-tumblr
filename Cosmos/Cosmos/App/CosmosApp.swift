@@ -1,17 +1,19 @@
-//
-//  CosmosApp.swift
-//  Cosmos
-//
-//  Created by mike on 4/10/25.
-//
-
+import Dependencies
 import SwiftUI
 
 @main
 struct CosmosApp: App {
+    init() {
+//        prepareDependencies {
+//            $0.tumblrClient = .previewValue
+//        }
+    }
+    
     var body: some Scene {
         WindowGroup {
             BlogPostsView()
         }
     }
 }
+
+

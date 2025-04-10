@@ -12,23 +12,13 @@ struct TumblrModelDecodingTests {
         // NOTE: Assumes GetPostsResponse.json is added to the test target's resources.
         // `Bundle.module` works for Swift Packages. Adjust if using a different setup
         // (e.g., `Bundle(for: Self.self)` might be needed in an Xcode project).
-        let fileURL = try #require(Bundle(for: Context.self).url(forResource: "GetPostsResponse", withExtension: "json"))
+        let fileURL = try #require(Bundle(for: Context.self).url(forResource: "GetPostsResponseRaw", withExtension: "json"))
 
         // Load the data from the file URL.
         let jsonData = try #require(try Data(contentsOf: fileURL))
 
         // --- 2. Configure JSON Decoder ---
-        let decoder = JSONDecoder()
-
-        // Configure date decoding for the specific format "yyyy-MM-dd HH:mm:ss zzz"
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss zzz"
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX") // Crucial for fixed formats
-        dateFormatter.timeZone = TimeZone(identifier: "GMT") // Explicitly set timezone
-        // decoder.dateDecodingStrategy = .formatted(dateFormatter)
-        // Note: Since the 'date' field in the Post model is currently String,
-        // we don't set the dateDecodingStrategy here. If you change the model's
-        // 'date' property to be a Date type, uncomment the line above.
+        let decoder = JSONDecoder.tumblr
 
         // --- 3. Decode JSON Data ---
         // Attempt to decode the JSON data into the top-level model.

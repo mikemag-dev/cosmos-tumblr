@@ -10,10 +10,4 @@ struct PostBlog: Decodable {
     // Define as optional dictionary, assuming keys/values are strings if present.
     let tumblrmartAccessories: [String: String]?
     let canShowBadges: Bool?
-
-    enum CodingKeys: String, CodingKey {
-        case name, title, description, url, uuid, updated
-        case tumblrmartAccessories = "tumblrmart_accessories"
-        case canShowBadges = "can_show_badges"
-    }
 }

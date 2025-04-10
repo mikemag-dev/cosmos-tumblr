@@ -19,11 +19,9 @@ class NetworkClient {
     private let session: URLSession
     private let decoder: JSONDecoder
 
-    public static let shared = NetworkClient()
-    private init(session: URLSession = .shared, decoder: JSONDecoder = JSONDecoder()) {
+    init(session: URLSession = .shared, decoder: JSONDecoder) {
         self.session = session
         self.decoder = decoder
-        // Configure decoder if needed (e.g., date/key strategies)
     }
 
     func fetch<Response: Decodable>(

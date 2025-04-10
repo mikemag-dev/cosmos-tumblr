@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		273D80242DA8363600D70502 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = 273D80232DA8363600D70502 /* Dependencies */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		27B83EF52DA807D1009F26D2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,41 +25,15 @@
 		27B83EF42DA807D1009F26D2 /* CosmosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CosmosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		27B83F852DA820D1009F26D2 /* Exceptions for "Cosmos" folder in "Cosmos" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Models/GetPosts/GetPostsResponse.json,
-			);
-			target = 27B83EE32DA807D0009F26D2 /* Cosmos */;
-		};
-		27B83F862DA820D1009F26D2 /* Exceptions for "Cosmos" folder in "CosmosTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Models/GetPosts/GetPostsResponse.json,
-			);
-			target = 27B83EF32DA807D1009F26D2 /* CosmosTests */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		27B83EE62DA807D0009F26D2 /* Cosmos */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				27B83F852DA820D1009F26D2 /* Exceptions for "Cosmos" folder in "Cosmos" target */,
-				27B83F862DA820D1009F26D2 /* Exceptions for "Cosmos" folder in "CosmosTests" target */,
-			);
 			path = Cosmos;
 			sourceTree = "<group>";
 		};
 		27B83EF72DA807D1009F26D2 /* CosmosTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = CosmosTests;
-			sourceTree = "<group>";
-		};
-		27B83F012DA807D1009F26D2 /* CosmosUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CosmosUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -65,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				273D80242DA8363600D70502 /* Dependencies in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,7 +62,6 @@
 			children = (
 				27B83EE62DA807D0009F26D2 /* Cosmos */,
 				27B83EF72DA807D1009F26D2 /* CosmosTests */,
-				27B83F012DA807D1009F26D2 /* CosmosUITests */,
 				27B83EE52DA807D0009F26D2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -117,6 +95,7 @@
 			);
 			name = Cosmos;
 			packageProductDependencies = (
+				273D80232DA8363600D70502 /* Dependencies */,
 			);
 			productName = Cosmos;
 			productReference = 27B83EE42DA807D0009F26D2 /* Cosmos.app */;
@@ -173,6 +152,9 @@
 			);
 			mainGroup = 27B83EDB2DA807D0009F26D2;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				273D80222DA8363600D70502 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 27B83EE52DA807D0009F26D2 /* Products */;
 			projectDirPath = "";
@@ -473,6 +455,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		273D80222DA8363600D70502 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.9.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		273D80232DA8363600D70502 /* Dependencies */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 273D80222DA8363600D70502 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = Dependencies;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 27B83EDC2DA807D0009F26D2 /* Project object */;
 }
