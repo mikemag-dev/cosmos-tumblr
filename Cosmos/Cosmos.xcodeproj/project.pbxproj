@@ -14,24 +14,37 @@
 			remoteGlobalIDString = 27B83EE32DA807D0009F26D2;
 			remoteInfo = Cosmos;
 		};
-		27B83EFF2DA807D1009F26D2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 27B83EDC2DA807D0009F26D2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 27B83EE32DA807D0009F26D2;
-			remoteInfo = Cosmos;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		27B83EE42DA807D0009F26D2 /* Cosmos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cosmos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		27B83EF42DA807D1009F26D2 /* CosmosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CosmosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		27B83EFE2DA807D1009F26D2 /* CosmosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CosmosUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		27B83F852DA820D1009F26D2 /* Exceptions for "Cosmos" folder in "Cosmos" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/GetPosts/GetPostsResponse.json,
+			);
+			target = 27B83EE32DA807D0009F26D2 /* Cosmos */;
+		};
+		27B83F862DA820D1009F26D2 /* Exceptions for "Cosmos" folder in "CosmosTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/GetPosts/GetPostsResponse.json,
+			);
+			target = 27B83EF32DA807D1009F26D2 /* CosmosTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		27B83EE62DA807D0009F26D2 /* Cosmos */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				27B83F852DA820D1009F26D2 /* Exceptions for "Cosmos" folder in "Cosmos" target */,
+				27B83F862DA820D1009F26D2 /* Exceptions for "Cosmos" folder in "CosmosTests" target */,
+			);
 			path = Cosmos;
 			sourceTree = "<group>";
 		};
@@ -62,13 +75,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		27B83EFB2DA807D1009F26D2 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -87,7 +93,6 @@
 			children = (
 				27B83EE42DA807D0009F26D2 /* Cosmos.app */,
 				27B83EF42DA807D1009F26D2 /* CosmosTests.xctest */,
-				27B83EFE2DA807D1009F26D2 /* CosmosUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -140,29 +145,6 @@
 			productReference = 27B83EF42DA807D1009F26D2 /* CosmosTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		27B83EFD2DA807D1009F26D2 /* CosmosUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 27B83F0E2DA807D1009F26D2 /* Build configuration list for PBXNativeTarget "CosmosUITests" */;
-			buildPhases = (
-				27B83EFA2DA807D1009F26D2 /* Sources */,
-				27B83EFB2DA807D1009F26D2 /* Frameworks */,
-				27B83EFC2DA807D1009F26D2 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				27B83F002DA807D1009F26D2 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				27B83F012DA807D1009F26D2 /* CosmosUITests */,
-			);
-			name = CosmosUITests;
-			packageProductDependencies = (
-			);
-			productName = CosmosUITests;
-			productReference = 27B83EFE2DA807D1009F26D2 /* CosmosUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -177,10 +159,6 @@
 						CreatedOnToolsVersion = 16.2;
 					};
 					27B83EF32DA807D1009F26D2 = {
-						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 27B83EE32DA807D0009F26D2;
-					};
-					27B83EFD2DA807D1009F26D2 = {
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = 27B83EE32DA807D0009F26D2;
 					};
@@ -202,7 +180,6 @@
 			targets = (
 				27B83EE32DA807D0009F26D2 /* Cosmos */,
 				27B83EF32DA807D1009F26D2 /* CosmosTests */,
-				27B83EFD2DA807D1009F26D2 /* CosmosUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -216,13 +193,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		27B83EF22DA807D1009F26D2 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		27B83EFC2DA807D1009F26D2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -246,13 +216,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		27B83EFA2DA807D1009F26D2 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -260,11 +223,6 @@
 			isa = PBXTargetDependency;
 			target = 27B83EE32DA807D0009F26D2 /* Cosmos */;
 			targetProxy = 27B83EF52DA807D1009F26D2 /* PBXContainerItemProxy */;
-		};
-		27B83F002DA807D1009F26D2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 27B83EE32DA807D0009F26D2 /* Cosmos */;
-			targetProxy = 27B83EFF2DA807D1009F26D2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -484,40 +442,6 @@
 			};
 			name = Release;
 		};
-		27B83F0F2DA807D1009F26D2 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Q2X6898EQF;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mike.CosmosUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Cosmos;
-			};
-			name = Debug;
-		};
-		27B83F102DA807D1009F26D2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Q2X6898EQF;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mike.CosmosUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Cosmos;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -544,15 +468,6 @@
 			buildConfigurations = (
 				27B83F0C2DA807D1009F26D2 /* Debug */,
 				27B83F0D2DA807D1009F26D2 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		27B83F0E2DA807D1009F26D2 /* Build configuration list for PBXNativeTarget "CosmosUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				27B83F0F2DA807D1009F26D2 /* Debug */,
-				27B83F102DA807D1009F26D2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
