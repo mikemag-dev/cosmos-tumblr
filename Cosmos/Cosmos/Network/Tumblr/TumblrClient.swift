@@ -2,17 +2,17 @@ import Foundation
 import Dependencies
 
 public struct TumblrClient {
-    typealias GetPostsForBlogId = (String) async throws -> GetPostsResponse
+    typealias GetPhotosForBlogId = (String) async throws -> GetPostsResponse
     
     let baseURL: () -> URL
-    let getPostsForBlogId: GetPostsForBlogId
+    let getPhotosForBlogId: GetPhotosForBlogId
 
     init(
         baseURL: @escaping () -> URL = { fatalError("TumblrClient baseURL not set") },
-        getPostsForBlogId: @escaping GetPostsForBlogId
+        getPhotosForBlogId: @escaping GetPhotosForBlogId
     ) {
         self.baseURL = baseURL
-        self.getPostsForBlogId = getPostsForBlogId
+        self.getPhotosForBlogId = getPhotosForBlogId
     }
 }
 

@@ -58,7 +58,7 @@ class NetworkClient {
         }
 
         do {
-            return try decoder.decode(Response.self, from: data)
+            return try! decoder.decode(Response.self, from: data)
         } catch {
             throw NetworkError.decodingFailed(error)
         }

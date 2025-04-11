@@ -6,9 +6,11 @@ import Dependencies
 @Observable
 class BlogPostsViewModel {
     @ObservationIgnored @Dependency(\.tumblrClient) private var tumblrClient
+    @ObservationIgnored @Dependency(\.router) private var router
 
     enum Action {
         case fetchPosts
+        case selectedPhoto(photo: PhotoViewModel)
     }
     
     enum State {
@@ -17,12 +19,13 @@ class BlogPostsViewModel {
         case error(String)
     }
 
-    private(set) var imageURLs: [URL] = []
+    private(set) var photoViewModels: [PhotoViewModel] = []
     private(set) var state: State = .loaded
     private let blogId: String
 
     // MARK: - Initialization
 
+    nonisolated
     init(blogId: String) {
         self.blogId = blogId
         Task {
@@ -31,10 +34,14 @@ class BlogPostsViewModel {
     }
 
     // MARK: - Public Methods
-    public func send(action: Action) async {
+    public func send(action: Action) {
         switch action {
         case .fetchPosts:
-            await fetchPosts()
+            Task {
+                await fetchPosts()
+            }
+        case .selectedPhoto(let photoViewModel):
+            router.path.append((.photo(photoViewModel: photoViewModel)))
         }
     }
 
@@ -45,18 +52,18 @@ class BlogPostsViewModel {
             return
         }
         print("Fetching posts for blog ID: \(blogId)...")
-        imageURLs = []
+        photoViewModels = []
         state = .loading
 
         do {
             print("fetching posts")
-            let posts = try await tumblrClient.getPostsForBlogId(blogId).response.posts
+            let posts = try await tumblrClient.getPhotosForBlogId(blogId).response.posts
             print("Successfully fetched \(posts.count) posts.")
 
-            let extractedURLs = extractImageURLs(from: posts)
-            print("Extracted \(extractedURLs.count) image URLs.")
+            let extractPhotos = extractPhotos(from: posts)
+            print("Extracted \(extractPhotos.count) image URLs.")
 
-            self.imageURLs = extractedURLs
+            self.photoViewModels = extractPhotos
             self.state = .loaded
 
         } catch {
@@ -65,24 +72,9 @@ class BlogPostsViewModel {
         }
     }
     
-    private func extractImageURLs(from posts: [Post]) -> [URL] {
-        var urls: [URL] = []
-
-        for post in posts {
-            var imageURLString: String? = nil
-
-            if let firstPhotoURL = post.photos?.first?.originalSize?.url {
-                imageURLString = firstPhotoURL
-            } else if let linkImageURL = post.linkImage {
-                imageURLString = linkImageURL
-            }
-
-            if let urlString = imageURLString, let url = URL(string: urlString) {
-                urls.append(url)
-            } else if let urlString = imageURLString {
-                 print("Warning: Could not create URL from string: \(urlString)")
-            }
+    private func extractPhotos(from posts: [Post]) -> [PhotoViewModel] {
+        posts.reduce(into: [PhotoViewModel]()) { partialResult, post in
+            partialResult.append(contentsOf: post.photos?.compactMap(PhotoViewModel.init(photo:)) ?? [])
         }
-        return urls
     }
 }

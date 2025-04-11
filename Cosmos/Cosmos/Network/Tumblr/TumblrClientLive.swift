@@ -11,7 +11,7 @@ extension TumblrClient: DependencyKey {
             URL(string: "https://api.tumblr.com/v2")!
         }
         
-        func getPostsForBlogId(_ blogId: String) async throws -> GetPostsResponse {
+        func getPhotosForBlogId(_ blogId: String) async throws -> GetPostsResponse {
             let path = "/blog/\(blogId)/posts"
             let url = baseURL().appendingPathComponent(path)
 
@@ -28,7 +28,7 @@ extension TumblrClient: DependencyKey {
         
         return .init(
             baseURL: baseURL,
-            getPostsForBlogId: getPostsForBlogId
+            getPhotosForBlogId: getPhotosForBlogId
         )
     }()
 }

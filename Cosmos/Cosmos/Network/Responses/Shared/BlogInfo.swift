@@ -12,13 +12,13 @@ struct BlogInfo: Decodable, Identifiable {
     let canSubscribe: Bool
     let description: String
     let isNsfw: Bool
-    let likes: Int // Assuming likes can be large, consider Int64 if needed
+    let likes: Int? // Assuming likes can be large, consider Int64 if needed
     let name: String
     let posts: Int // Count of posts in the blog overall
     let shareLikes: Bool
     let subscribed: Bool
     let themeId: Int? // Made optional as theme info might vary
-    let theme: BlogTheme? // Made optional
+//    let theme: BlogTheme? // Made optional
     let title: String
     let totalPosts: Int
     let updated: TimeInterval // Unix timestamp -> TimeInterval/Date

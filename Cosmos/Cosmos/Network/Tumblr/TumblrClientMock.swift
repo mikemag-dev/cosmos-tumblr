@@ -8,7 +8,7 @@ extension TumblrClient: TestDependencyKey {
     public static let previewValue: TumblrClient = {
         var shouldSucceed: Bool = true
 
-        func getPostsForBlogId(_ blogId: String) async throws -> GetPostsResponse {
+        func getPhotosForBlogId(_ blogId: String) async throws -> GetPostsResponse {
             
             
             let fileURL = Bundle(for: Context.self).url(forResource: "GetPostsResponseMock", withExtension: "json")!
@@ -27,7 +27,7 @@ extension TumblrClient: TestDependencyKey {
         }
         
         return .init(
-            getPostsForBlogId: getPostsForBlogId
+            getPhotosForBlogId: getPhotosForBlogId
         )
     }()
 }
