@@ -18,17 +18,40 @@ struct BlogPhotosView: View {
             .padding()
     }
     
+    @ViewBuilder
+    var loadingMoreSpinner: some View {
+        switch viewModel.paginator.state {
+        case .loadedHasMore, .unloaded, .loading:
+            ProgressView()
+                .padding(.bottom, 10)
+                .frame(maxWidth: .infinity)
+        case .error, .loadedComplete:
+            let _ = 0
+        }
+    }
+    
     var photosList: some View {
         ScrollView {
-            LazyVGrid(columns: columns) {
-                let rowIterator = Array(stride(from: 0, to: viewModel.photoViewModels.count, by: numColumns))
-                ForEach(viewModel.photoViewModels, id: \.self) { photoViewModel in
-                    PhotoView(photoViewModel: photoViewModel)
-                        .frame(height: 200)
-                        .onTapGesture {
-                            viewModel.send(action: .selectedPhoto(photo: photoViewModel))
-                        }
+            LazyVStack {
+                LazyVGrid(columns: columns) {
+                    ForEach(viewModel.photoViewModels) { photoViewModel in
+                        PhotoView(photoViewModel: photoViewModel)
+                            .frame(height: 200)
+                            .onTapGesture {
+                                viewModel.send(.selectedPhoto(photo: photoViewModel))
+                            }
+                            .onAppear {
+                                // start loading next page with 4 rows remaining
+                                let lookaheadCount = numColumns * 4
+                                let nearBottomIndex = viewModel.photoViewModels.count > lookaheadCount ? viewModel.photoViewModels.count - lookaheadCount - 1 : viewModel.photoViewModels.count - 1
+                                let _ = print(nearBottomIndex)
+                                if photoViewModel == viewModel.photoViewModels[nearBottomIndex] {
+                                    viewModel.send(.scrolledToBottom)
+                                }
+                            }
+                    }
                 }
+                loadingMoreSpinner
             }
         }
     }
@@ -45,6 +68,9 @@ struct BlogPhotosView: View {
             }
         }
         .navigationTitle("Blog Images")
+        .task {
+            viewModel.send(.scrolledToBottom)
+        }
     }
 }
 

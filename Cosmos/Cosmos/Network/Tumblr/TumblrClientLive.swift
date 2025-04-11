@@ -7,17 +7,22 @@ extension TumblrClient: DependencyKey {
         let apiKey = Secrets.tumblrApiKey
         let networkClient = NetworkClient(decoder: JSONDecoder.tumblr)
         
+        let queryItems: [URLQueryItem] = [
+            URLQueryItem(name: "api_key", value: apiKey)
+        ]
+        
         func baseURL() -> URL {
             URL(string: "https://api.tumblr.com/v2")!
         }
         
-        func getPhotosForBlogId(_ blogId: String) async throws -> GetPostsResponse {
-            let path = "/blog/\(blogId)/posts"
+        func getPosts(_ request: GetPostsRequest) async throws -> GetPostsResponse {
+            let path = "/blog/\(request.blogId)/posts"
             let url = baseURL().appendingPathComponent(path)
 
-            let queryItems = [
-                URLQueryItem(name: "api_key", value: apiKey)
-            ]
+            var queryItems = queryItems
+            queryItems.append(.init(name: "type", value: request.type.rawValue))
+            queryItems.append(.init(name: "limit", value: "\(request.pageSize)"))
+            queryItems.append(.init(name: "offset", value: "\(request.offset)"))
 
             return try await networkClient.fetch(
                 url: url,
@@ -28,7 +33,7 @@ extension TumblrClient: DependencyKey {
         
         return .init(
             baseURL: baseURL,
-            getPhotosForBlogId: getPhotosForBlogId
+            getPosts: getPosts
         )
     }()
 }

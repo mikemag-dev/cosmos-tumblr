@@ -5,6 +5,7 @@ enum Destination: Codable, Hashable {
     case photo(photoViewModel: PhotoViewModel)
 
     @ViewBuilder
+    @MainActor
     var view: some View {
         switch self {
         case .blogPhotos(let blogId):

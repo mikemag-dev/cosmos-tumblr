@@ -15,7 +15,7 @@ struct PhotoViewModel: Identifiable, Codable, Hashable {
     
     func getThumbnailURL(forIntentSize intentSize: CGSize) -> URL? {
         // TODO: remove test code
-        // comment this in for testing what (2nd) smallest thumbnail looks like
+        // comment this in for testing what (2nd) smallest thumbnail looks like during demo
 //        if let altSizes = photo.altSizes, altSizes.count > 1 {
 //            return altSizes[altSizes.count-2].url
 //        }
@@ -29,7 +29,7 @@ struct PhotoViewModel: Identifiable, Codable, Hashable {
             print("no photo size found for \(photo)")
             return nil
         }
-        print("loaded photo size: \(photoSize.width)x\(photoSize.height) into \(photoSize.width)x\(photoSize.height)")
+//        print("loaded photo size: \(photoSize.width)x\(photoSize.height) into \(intentSize.width)x\(intentSize.height)")
         return photoSize.url
     }
     

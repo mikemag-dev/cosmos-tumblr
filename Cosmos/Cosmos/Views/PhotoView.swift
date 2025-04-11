@@ -6,7 +6,6 @@ struct PhotoView: View {
     var body: some View {
         GeometryReader { geometry in // geometry is a GeometryProxy
             VStack {
-                let _ = print("Geometry size: \(geometry.size)") // Debugging line to check geometry size
                 AsyncImage(url: photoViewModel.getThumbnailURL(forIntentSize: geometry.size)) { image in
                     image
                         .resizable()
