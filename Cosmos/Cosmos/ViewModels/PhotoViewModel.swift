@@ -7,9 +7,11 @@ class PhotoViewModel: Identifiable {
     private let photo: Photo
     private let originalUrl: URL
     var id: String { originalUrl.absoluteString }
-    var prefetchTask: Task<Void, Never>?
-    //TODO: consider moving this to PhotosViewModel to limit concurrent prefetches
-    private var imagePrefetcher: ImagePrefetcher?
+    var state: State = .idle {
+        didSet {
+            print("\(Self.self) \(oldValue) -> \(state)")
+        }
+    }
     
     init?(photo: Photo) {
         guard let originalSizeUrl = photo.originalSize?.url else {
@@ -41,9 +43,21 @@ class PhotoViewModel: Identifiable {
     
     // MARK: - State Machine
     
-    enum State {
-        case prefetching
-        case prefetchComplete
+    enum State: CustomDebugStringConvertible {
+        case idle
+        case waitingToPrefetch(prefetchTask: Task<Void, Never>)
+        case prefetching(imagePrefetcher: ImagePrefetcher)
+        
+        var debugDescription: String {
+            switch self {
+            case .idle:
+                return "Idle"
+            case .waitingToPrefetch(let task):
+                return "Waiting to Prefetch \(task.hashValue)"
+            case .prefetching(let prefetcher):
+                return "Prefetching \(prefetcher.description)"
+            }
+        }
     }
     
     enum Event {
@@ -64,23 +78,32 @@ class PhotoViewModel: Identifiable {
     // MARK: - Private Helper Methods
     
     private func delayedPreFetch() {
-        prefetchTask?.cancel()
-        imagePrefetcher?.stop()
-        prefetchTask = Task {
+        cancelPrefetch()
+        let task = Task {
             // delay so that we only refresh if user is paused on screen
             // 1s is probably better, but using 2s for demo purposes
             try? await Task.sleep(for: .seconds(2))
-            guard let isCancelled = prefetchTask?.isCancelled, !isCancelled else { return }
-            // TODO: demo purposes only
-            //            print("prefetching image \(originalUrl)")
-            imagePrefetcher = ImagePrefetcher(urls: [originalUrl])
-            imagePrefetcher?.start()
+            if Task.isCancelled {
+                return
+            }
+            let imagePrefetcher = ImagePrefetcher(urls: [originalUrl])
+            state = .prefetching(imagePrefetcher: imagePrefetcher)
+            imagePrefetcher.start()
         }
+        state = .waitingToPrefetch(prefetchTask: task)
     }
     
     private func cancelPrefetch() {
-        prefetchTask?.cancel()
-        imagePrefetcher?.stop()
+        switch state {
+        case .idle:
+            break
+        case .waitingToPrefetch(let task):
+            task.cancel()
+            state = .idle
+        case .prefetching(let prefetcher):
+            prefetcher.stop()
+            state = .idle
+        }
     }
 }
 
