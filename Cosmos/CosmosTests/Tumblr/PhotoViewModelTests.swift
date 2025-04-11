@@ -92,7 +92,6 @@ struct PhotoViewModelTests {
     @Test("Send Scrolled Transitions Cancel Early")
     func testSendScrolledTransitionsCancelEarly() async throws {
         viewModel.send(.imageScrolledIn)
-        try await Task.sleep(for: .seconds(1))
         viewModel.send(.imageScrolledOut)
 
         switch viewModel.state {

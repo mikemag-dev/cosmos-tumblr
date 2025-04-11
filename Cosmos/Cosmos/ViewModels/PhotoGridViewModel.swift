@@ -110,30 +110,6 @@ class PhotoGridViewModel {
         paginator.tryBatchFetch(numPages: pagesNeeded)
     }
     
-    private func fetchPhotos(offset: Int, pageSize: Int) async {
-        if case .loading = state {
-            print("Already loading posts, ignoring fetch request.")
-            return
-        }
-        print("Fetching posts for blog ID: \(blogId)...")
-        photoViewModels = []
-        state = .loading
-        
-        let request = GetPostsRequest(blogId: blogId, type: .photo, offset: offset, pageSize: pageSize)
-        
-        do {
-            print("fetching posts")
-            let posts = try await tumblrClient.getPosts(request).response.posts
-            print("Successfully fetched \(posts.count) posts.")
-            
-            let extractPhotos = extractPhotoViewModels(from: posts)
-            print("Extracted \(extractPhotos.count) image URLs.")
-            
-            self.photoViewModels = extractPhotos
-            self.state = .loaded
-            
-        } catch {
-            print("Error fetching posts: \(error.localizedDescription)")
         }
     }
     
