@@ -32,7 +32,7 @@ struct PhotoViewModelTests {
             ]
         )
         
-        let viewModel = PhotoViewModel(photo: photo)
+        let viewModel = PhotoViewModel(photo: photo)!
         
         #expect(viewModel.getThumbnailURL(forIntentSize: .init(width: 100, height: 100)) == URL(string: "https://cosmos.com/100.jpg"))
         #expect(viewModel.getThumbnailURL(forIntentSize: .init(width: 101, height: 101)) == URL(string: "https://cosmos.com/200.jpg"))

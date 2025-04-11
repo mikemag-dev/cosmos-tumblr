@@ -5,13 +5,13 @@ struct PhotoGridView: View {
     static let zoomInThreshold: CGFloat = 1.2
     static let zoomOutThreshold: CGFloat = 0.8
     static let maxColumns: Int = 10
-
+    
     @State private var viewModel: PhotoGridViewModel
     @State private var numColumns = 3
     var columns: [GridItem] {
         Array(repeating: GridItem(.flexible()), count: numColumns)
     }
-
+    
     init(_ viewModel: PhotoGridViewModel) {
         _viewModel = State(wrappedValue: viewModel)
     }
@@ -29,8 +29,8 @@ struct PhotoGridView: View {
             ProgressView()
                 .padding(.bottom, 10)
                 .frame(maxWidth: .infinity)
-                // detects if loading spinner is on screen
-                // necessary for pinching since the prefetching does not always hit
+            // detects if loading spinner is on screen
+            // necessary for pinching since the prefetching does not always hit
                 .onGeometryChange(for: Bool.self) { proxy in
                     let frame = proxy.frame(in: .scrollView)
                     let bounds = proxy.bounds(of: .scrollView) ?? .zero
@@ -43,7 +43,7 @@ struct PhotoGridView: View {
                         viewModel.send(.scrolledToBottom)
                     }
                 }
-
+            
         case .error, .loadedComplete:
             let _ = 0
         }
@@ -103,7 +103,7 @@ struct PhotoGridView: View {
             )
         }
     }
-
+    
     var body: some View {
         Group {
             switch viewModel.state {

@@ -5,7 +5,7 @@ struct PhotoView: View {
     let photoViewModel: PhotoViewModel
     
     var body: some View {
-        GeometryReader { geometry in // geometry is a GeometryProxy
+        GeometryReader { geometry in
             VStack {
                 // smoother, but no GIF support
                 //                AsyncImage(url: photoViewModel.getThumbnailURL(forIntentSize: geometry.size)) { image in

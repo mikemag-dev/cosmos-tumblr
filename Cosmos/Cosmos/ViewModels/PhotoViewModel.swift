@@ -1,22 +1,16 @@
 import Foundation
 import Kingfisher
 
-class PhotoViewModel: Identifiable, Equatable, Hashable {
-    let photo: Photo
+//TODO: limit prefetchers
+
+class PhotoViewModel: Identifiable {
+    private let photo: Photo
     private let originalUrl: URL
     var id: String { originalUrl.absoluteString }
     var prefetchTask: Task<Void, Never>?
     //TODO: consider moving this to PhotosViewModel to limit concurrent prefetches
-    var imagePrefetcher: ImagePrefetcher?
+    private var imagePrefetcher: ImagePrefetcher?
     
-    static func == (lhs: PhotoViewModel, rhs: PhotoViewModel) -> Bool {
-        lhs.id == rhs.id
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-
     init?(photo: Photo) {
         guard let originalSizeUrl = photo.originalSize?.url else {
             return nil
@@ -41,9 +35,11 @@ class PhotoViewModel: Identifiable, Equatable, Hashable {
             print("no photo size found for \(photo)")
             return nil
         }
-        //        print("loaded photo size: \(photoSize.width)x\(photoSize.height) into \(intentSize.width)x\(intentSize.height)")
+        //                print("loaded photo size: \(photoSize.width)x\(photoSize.height) into \(intentSize.width)x\(intentSize.height)")
         return photoSize.url
     }
+    
+    // MARK: - State Machine
     
     enum State {
         case prefetching
@@ -56,7 +52,7 @@ class PhotoViewModel: Identifiable, Equatable, Hashable {
     }
     
     func send(_ event: Event) {
-//        print("\(Self.self) event received \(event)")
+        //        print("\(Self.self) event received \(event)")
         switch event {
         case .imageScrolledIn:
             delayedPreFetch()
@@ -65,7 +61,9 @@ class PhotoViewModel: Identifiable, Equatable, Hashable {
         }
     }
     
-    func delayedPreFetch() {
+    // MARK: - Private Helper Methods
+    
+    private func delayedPreFetch() {
         prefetchTask?.cancel()
         imagePrefetcher?.stop()
         prefetchTask = Task {
@@ -74,14 +72,28 @@ class PhotoViewModel: Identifiable, Equatable, Hashable {
             try? await Task.sleep(for: .seconds(2))
             guard let isCancelled = prefetchTask?.isCancelled, !isCancelled else { return }
             // TODO: demo purposes only
-//            print("prefetching image \(originalUrl)")
+            //            print("prefetching image \(originalUrl)")
             imagePrefetcher = ImagePrefetcher(urls: [originalUrl])
             imagePrefetcher?.start()
         }
     }
     
-    func cancelPrefetch() {
+    private func cancelPrefetch() {
         prefetchTask?.cancel()
         imagePrefetcher?.stop()
+    }
+}
+
+// MARK: - Equatable and Hashable Conformance
+
+extension PhotoViewModel: Equatable, Hashable  {
+    
+    
+    static func == (lhs: PhotoViewModel, rhs: PhotoViewModel) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

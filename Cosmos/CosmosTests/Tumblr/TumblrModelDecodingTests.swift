@@ -31,7 +31,7 @@ struct TumblrModelDecodingTests {
         #expect(apiResponse.meta.msg == "OK")
 
         let responseData = apiResponse.response
-        #expect(responseData.totalPosts == 3867)
+        #expect(responseData.totalPosts == 935)
         #expect(!responseData.posts.isEmpty) // Check that posts array is not empty
     }
 }

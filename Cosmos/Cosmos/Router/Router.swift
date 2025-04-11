@@ -2,10 +2,11 @@ import Dependencies
 import SwiftUI
 
 @Observable
-@MainActor
 class Router {
     public var path = [Destination]()
 }
+
+// MARK: - DependencyInjection
 
 extension DependencyValues {
     var router: Router {
@@ -15,5 +16,7 @@ extension DependencyValues {
 }
 
 extension Router: DependencyKey {
-    public static let liveValue: Router = Router()
+    public static var liveValue: Router {
+        Router()
+    }
 }

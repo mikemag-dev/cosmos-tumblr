@@ -45,8 +45,8 @@ class PhotoGridViewModel {
                 return "scrolledToBottom"
             case .layoutUpdated(let minPhotos):
                 return "layoutUpdated \(minPhotos)"
-            case .selectedPhoto(let photo):
-                return "selectedPhoto: \(photo.photo.originalSize?.url.absoluteString ?? "no url")"
+            case .selectedPhoto(let photoViewModel):
+                return "selectedPhoto: \(photoViewModel.getThumbnailURL(forIntentSize: .init(width: .max, height: .max))?.absoluteString ?? "no url")"
             }
         }
     }
@@ -76,9 +76,7 @@ class PhotoGridViewModel {
         case .selectedPhoto(let photoViewModel):
             router.path.append((.photo(photoViewModel: photoViewModel)))
         case .layoutUpdated(let minPhotos):
-            let photosNeeded = minPhotos - photoViewModels.count
-            let pagesNeeded = photosNeeded / Self.pageSize + 1
-            paginator.tryBatchFetch(numPages: pagesNeeded)
+            batchFetchPhotos(minPhotos: minPhotos)
         }
     }
     
@@ -104,6 +102,12 @@ class PhotoGridViewModel {
             let photoViewModels = extractPhotoViewModels(from: response.response.posts)
             partialResult += photoViewModels
         }
+    }
+    
+    private func batchFetchPhotos(minPhotos: Int) {
+        let photosNeeded = minPhotos - photoViewModels.count
+        let pagesNeeded = photosNeeded / Self.pageSize + 1
+        paginator.tryBatchFetch(numPages: pagesNeeded)
     }
     
     private func fetchPhotos(offset: Int, pageSize: Int) async {
