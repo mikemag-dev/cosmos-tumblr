@@ -1,14 +1,11 @@
 import Foundation
 import Combine
 
-protocol PageableResponse<T> {
-    associatedtype T
-    var data: T { get }
+protocol PageableResponse {
     var total: Int { get }
 }
 
-typealias AsyncPagedFetch<T> = (_ offset: Int) async throws -> any PageableResponse<T>
-
+typealias AsyncPagedFetch<T> = (_ offset: Int) async throws -> T
 // this class is definitely over-engineered for the project's scope,
 // but I want to demonstrate what I'm imagining for a more reusable paginator as the app might scale
 
@@ -25,7 +22,7 @@ struct PaginationError: Error, Equatable {
 }
 
 /// a reusable, abstract paginator capable of fetching a pageable API until completion
-class Paginator<Data>: ObservableObject {
+class Paginator<T: PageableResponse>: ObservableObject {
     enum State: Equatable {
         case unloaded
         case loadedComplete
@@ -35,7 +32,8 @@ class Paginator<Data>: ObservableObject {
     }
     
     enum StreamEvent {
-        case data(Data)
+        case data(T)
+        case datas([T])
         case error(PaginationError)
     }
     
@@ -47,15 +45,15 @@ class Paginator<Data>: ObservableObject {
     public var datasPublisher: AnyPublisher<StreamEvent, Never> { datasSubject.eraseToAnyPublisher() }
     
     //use this if you want to use Paginator-managed data (might be less optimizable/efficient in certain scenarios where results are shared)
-    @Published public private(set) var datas = [Data]()
+    @Published public private(set) var datas = [T]()
     @Published public private(set) var state: State = .unloaded
 
     /// do not use directly, only exposed for testing
     public private(set) var lastSuccessfullyFetchedPage: Int?
     private let pageSize: Int
-    private let fetch: AsyncPagedFetch<Data>
+    private let fetch: AsyncPagedFetch<T>
 
-    init(pageSize: Int, fetch: @escaping AsyncPagedFetch<Data>) {
+    init(pageSize: Int, fetch: @escaping AsyncPagedFetch<T>) {
         self.pageSize = pageSize
         self.fetch = fetch
     }
@@ -65,6 +63,52 @@ class Paginator<Data>: ObservableObject {
             return false
         } else {
             return true
+        }
+    }
+    
+    public func tryBatchFetch(numPages: Int) {
+        guard canFetch, numPages > 0 else { return }
+        switch state {
+        case .loadedComplete, .loading:
+            return
+            
+        case .unloaded, .loadedHasMore, .error:
+            state = .loading
+            Task {
+                do {
+                    let firstPageToFetch = lastSuccessfullyFetchedPage == nil ? 0 : lastSuccessfullyFetchedPage! + 1
+                    let lastPageToFetch = firstPageToFetch + numPages - 1
+                    let responses: [T] = try await withThrowingTaskGroup(of: T.self) { [weak self] group in
+                        guard let self = self else { throw PaginationError(message: "Paginator deallocated") }
+                        for page in firstPageToFetch...lastPageToFetch {
+                            group.addTask {
+                                let offset = page * self.pageSize
+                                return try await self.fetch(offset)
+                            }
+                        }
+                        var responses = [T]()
+                        for try await response in group {
+                            responses.append(response)
+                        }
+                        return responses
+                    }
+                    guard !responses.isEmpty else {
+                        state = .error(error: PaginationError(message: "No data returned"))
+                        datasSubject.send(.error(PaginationError(message: "No data returned")))
+                        return
+                    }
+                    self.lastSuccessfullyFetchedPage = lastPageToFetch
+                    let hasMore = responses[responses.count - 1].total > lastPageToFetch * pageSize
+                    self.state = hasMore ? .loadedHasMore : .loadedComplete
+                    datasSubject.send(.datas(responses))
+                    datas += responses
+                } catch (let error) {
+                    lastErrorTime = Date().timeIntervalSince1970
+                    state = .error(error: PaginationError(error: error))
+                    datasSubject.send(.error(PaginationError(error: error)))
+                    return
+                }
+            }
         }
     }
     
@@ -83,8 +127,8 @@ class Paginator<Data>: ObservableObject {
                     self.lastSuccessfullyFetchedPage = pageToFetch
                     let hasMore = response.total > (pageToFetch + 1) * pageSize
                     self.state = hasMore ? .loadedHasMore : .loadedComplete
-                    datasSubject.send(.data(response.data))
-                    datas.append(response.data)
+                    datasSubject.send(.data(response))
+                    datas.append(response)
                 } catch (let error) {
                     lastErrorTime = Date().timeIntervalSince1970
                     state = .error(error: PaginationError(error: error))

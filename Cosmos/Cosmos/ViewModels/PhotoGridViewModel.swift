@@ -36,12 +36,15 @@ class PhotoGridViewModel {
     
     enum Event: CustomDebugStringConvertible {
         case scrolledToBottom
+        case layoutUpdated(minPhotos: Int)
         case selectedPhoto(photo: PhotoViewModel)
         
         var debugDescription: String {
             switch self {
             case .scrolledToBottom:
                 return "scrolledToBottom"
+            case .layoutUpdated(let minPhotos):
+                return "layoutUpdated \(minPhotos)"
             case .selectedPhoto(let photo):
                 return "selectedPhoto: \(photo.photo.originalSize?.url.absoluteString ?? "no url")"
             }
@@ -72,6 +75,10 @@ class PhotoGridViewModel {
             paginator.tryFetchMore()
         case .selectedPhoto(let photoViewModel):
             router.path.append((.photo(photoViewModel: photoViewModel)))
+        case .layoutUpdated(let minPhotos):
+            let photosNeeded = minPhotos - photoViewModels.count
+            let pagesNeeded = photosNeeded / Self.pageSize + 1
+            paginator.tryBatchFetch(numPages: pagesNeeded)
         }
     }
     
@@ -82,7 +89,9 @@ class PhotoGridViewModel {
                 guard let self = self else { return }
                 switch event {
                 case .data(let response):
-                    self.handleNewData(response: response)
+                    self.handleNewData(responses: [response])
+                case .datas(let responses):
+                    self.handleNewData(responses: responses)
                 case .error(let error):
                     self.state = .error("Failed to load posts: \(error.localizedDescription)")
                 }
@@ -90,10 +99,11 @@ class PhotoGridViewModel {
             .store(in: &cancellables)
     }
     
-    private func handleNewData(response: GetPostsResponse) {
-        print("Pagination stream received new posts: \(response.response.posts.count)")
-        let posts = extractPhotos(from: response.response.posts)
-        self.photoViewModels.append(contentsOf: posts)
+    private func handleNewData(responses: [GetPostsResponse]) {
+        photoViewModels += responses.reduce(into: [PhotoViewModel]()) { partialResult, response in
+            let photoViewModels = extractPhotoViewModels(from: response.response.posts)
+            partialResult += photoViewModels
+        }
     }
     
     private func fetchPhotos(offset: Int, pageSize: Int) async {
@@ -112,7 +122,7 @@ class PhotoGridViewModel {
             let posts = try await tumblrClient.getPosts(request).response.posts
             print("Successfully fetched \(posts.count) posts.")
             
-            let extractPhotos = extractPhotos(from: posts)
+            let extractPhotos = extractPhotoViewModels(from: posts)
             print("Extracted \(extractPhotos.count) image URLs.")
             
             self.photoViewModels = extractPhotos
@@ -123,7 +133,7 @@ class PhotoGridViewModel {
         }
     }
     
-    private func extractPhotos(from posts: [Post]) -> [PhotoViewModel] {
+    private func extractPhotoViewModels(from posts: [Post]) -> [PhotoViewModel] {
         posts.reduce(into: [PhotoViewModel]()) { partialResult, post in
             partialResult.append(contentsOf: post.photos?.compactMap(PhotoViewModel.init(photo:)) ?? [])
         }

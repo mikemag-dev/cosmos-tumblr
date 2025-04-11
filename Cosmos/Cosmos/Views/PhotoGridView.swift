@@ -1,6 +1,11 @@
 import SwiftUI
 
 struct PhotoGridView: View {
+    
+    static let zoomInThreshold: CGFloat = 1.2
+    static let zoomOutThreshold: CGFloat = 0.8
+    static let maxColumns: Int = 10
+
     @State private var viewModel: PhotoGridViewModel
     @State private var numColumns = 3
     var columns: [GridItem] {
@@ -8,7 +13,6 @@ struct PhotoGridView: View {
     }
 
     init(_ viewModel: PhotoGridViewModel) {
-        // Initialize StateObject with the injected provider
         _viewModel = State(wrappedValue: viewModel)
     }
     
@@ -84,11 +88,16 @@ struct PhotoGridView: View {
                 MagnificationGesture()
                     .onEnded { value in
                         withAnimation {
-                            if value > 0.8 {
-                                numColumns = min(numColumns + 1, 5)
-                            } else if value < 1.2 {
+                            if value > Self.zoomInThreshold {
                                 numColumns = max(numColumns - 1, 1)
+                            } else if value < Self.zoomOutThreshold {
+                                numColumns = min(numColumns + 1, Self.maxColumns)
                             }
+                            let newDim = proxy.size.width / CGFloat(numColumns)
+                            let availableHeight = proxy.size.height
+                            // 2 screens worth of photos
+                            let photosNeeded = Int((CGFloat(numColumns) * availableHeight / newDim).rounded(.up)) * 2
+                            viewModel.send(.layoutUpdated(minPhotos: photosNeeded))
                         }
                     }
             )

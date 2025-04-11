@@ -67,13 +67,14 @@ class PhotoViewModel: Identifiable, Equatable, Hashable {
     
     func delayedPreFetch() {
         prefetchTask?.cancel()
+        imagePrefetcher?.stop()
         prefetchTask = Task {
             // delay so that we only refresh if user is paused on screen
             // 1s is probably better, but using 2s for demo purposes
             try? await Task.sleep(for: .seconds(2))
             guard let isCancelled = prefetchTask?.isCancelled, !isCancelled else { return }
-            print("prefetching image \(originalUrl)")
-            imagePrefetcher?.stop()
+            // TODO: demo purposes only
+//            print("prefetching image \(originalUrl)")
             imagePrefetcher = ImagePrefetcher(urls: [originalUrl])
             imagePrefetcher?.start()
         }
