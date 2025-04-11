@@ -6,6 +6,7 @@ import Kingfisher
 class PhotoViewModel: Identifiable {
     private let photo: Photo
     private let originalUrl: URL
+    let originalSize: PhotoSize
     var id: String { originalUrl.absoluteString }
     var state: State = .idle {
         didSet {
@@ -14,11 +15,12 @@ class PhotoViewModel: Identifiable {
     }
     
     init?(photo: Photo) {
-        guard let originalSizeUrl = photo.originalSize?.url else {
+        guard let originalSize = photo.originalSize else {
             return nil
         }
         self.photo = photo
-        self.originalUrl = originalSizeUrl
+        self.originalUrl = originalSize.url
+        self.originalSize = originalSize
     }
     
     func getThumbnailURL(forIntentSize intentSize: CGSize) -> URL? {

@@ -12,6 +12,7 @@ class PhotoGridViewModel {
     
     let paginator: Paginator<GetPostsResponse>
     private(set) var photoViewModels: [PhotoViewModel] = []
+    private(set) var photoViewModels3Columns: [[PhotoViewModel]] = []
     private let blogId: String
     private var cancellables = Set<AnyCancellable>()
     
@@ -102,6 +103,7 @@ class PhotoGridViewModel {
             let photoViewModels = extractPhotoViewModels(from: response.response.posts)
             partialResult += photoViewModels
         }
+        self.photoViewModels3Columns = deriveGrid(photoViewModels: photoViewModels)
     }
     
     private func batchFetchPhotos(minPhotos: Int) {
@@ -110,7 +112,28 @@ class PhotoGridViewModel {
         paginator.tryBatchFetch(numPages: pagesNeeded)
     }
     
+    private func deriveGrid(photoViewModels: [PhotoViewModel]) -> [[PhotoViewModel]] {
+        var photoGridViewModels: [[PhotoViewModel]] = [[],[],[]]
+        let size = CGSize(width: 120, height: 120)
+        var columnHeights = [CGFloat](repeating: 0, count: 3)
+        for photoViewModel in photoViewModels {
+            let width = CGFloat(photoViewModel.originalSize.width)
+            let height = CGFloat(photoViewModel.originalSize.height)
+            let minHeight = columnHeights.min()!
+            let nextColumn = columnHeights.firstIndex(of: minHeight)!
+            if height > width {
+                columnHeights[nextColumn] += size.height
+                photoGridViewModels[nextColumn].append(photoViewModel)
+            } else {
+                let aspectRatio = width / height
+                let height = size.height / aspectRatio
+                columnHeights[nextColumn] += height
+                photoGridViewModels[nextColumn].append(photoViewModel)
+            }
         }
+        print("mmm columnHeights: \(columnHeights)")
+        print("mmm photoCounts: \(photoGridViewModels.map { $0.count })")
+        return photoGridViewModels
     }
     
     private func extractPhotoViewModels(from posts: [Post]) -> [PhotoViewModel] {

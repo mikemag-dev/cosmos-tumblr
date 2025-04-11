@@ -60,15 +60,36 @@ struct PhotoGridView: View {
                 if viewModel.photoViewModels.count > lookaheadCount {
                     let nearBottomIndex = viewModel.photoViewModels.count - lookaheadCount - 1
                     if photoViewModel == viewModel.photoViewModels[nearBottomIndex] {
-                        viewModel.send(.scrolledToBottom)
+//                        viewModel.send(.scrolledToBottom)
                     }
                 } else {
-                    viewModel.send(.scrolledToBottom)
+//                    viewModel.send(.scrolledToBottom)
                 }
                 photoViewModel.send(.imageScrolledIn)
             }.onDisappear {
                 photoViewModel.send(.imageScrolledOut)
             }
+    }
+    
+    var photosList2: some View {
+        ScrollView(.vertical) {
+            HStack(spacing: 0) {
+                ForEach(viewModel.photoViewModels3Columns, id: \.self) { photoViewModels in
+                    LazyVStack(spacing: 8) {
+                        ForEach(photoViewModels) { photoViewModel in
+                            // TODO: clean this up, make it more dynamic
+                            let width = CGFloat(120)
+                            let aspectRatio = CGFloat(photoViewModel.originalSize.width) / CGFloat(photoViewModel.originalSize.height)
+                            let height = width / aspectRatio
+                            photoView(for: photoViewModel)
+                                .frame(width: width, height: height)
+                        }
+                    }
+                }
+            }
+            
+            loadingMoreSpinnerRow
+        }
     }
     
     var photosList: some View {
@@ -112,7 +133,8 @@ struct PhotoGridView: View {
             case .error(let message):
                 errorText(message)
             case .loaded:
-                photosList
+                photosList2
+//                photosList
             }
         }
         .navigationTitle("Blog Images")
