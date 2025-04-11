@@ -2,7 +2,10 @@ import SwiftUI
 
 struct BlogPhotosView: View {
     @State private var viewModel: BlogPostsViewModel
-    @State private var numColumns = 1
+    @State private var numColumns = 3
+    var columns: [GridItem] {
+        Array(repeating: GridItem(.flexible()), count: numColumns)
+    }
 
     init(_ viewModel: BlogPostsViewModel) {
         // Initialize StateObject with the injected provider
@@ -16,12 +19,15 @@ struct BlogPhotosView: View {
     }
     
     var photosList: some View {
-        List {
-            ForEach(viewModel.photoViewModels, id: \.self) { photo in
-                PhotoView(photoViewModel: photo)
-                .frame(height: 200)
-                .onTapGesture {
-                    viewModel.send(action: .selectedPhoto(photo: photo))
+        ScrollView {
+            LazyVGrid(columns: columns) {
+                let rowIterator = Array(stride(from: 0, to: viewModel.photoViewModels.count, by: numColumns))
+                ForEach(viewModel.photoViewModels, id: \.self) { photoViewModel in
+                    PhotoView(photoViewModel: photoViewModel)
+                        .frame(height: 200)
+                        .onTapGesture {
+                            viewModel.send(action: .selectedPhoto(photo: photoViewModel))
+                        }
                 }
             }
         }
