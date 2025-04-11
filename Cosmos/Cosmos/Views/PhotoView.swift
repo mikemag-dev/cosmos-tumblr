@@ -1,4 +1,5 @@
 import SwiftUI
+import Kingfisher
 
 struct PhotoView: View {
     let photoViewModel: PhotoViewModel
@@ -6,22 +7,41 @@ struct PhotoView: View {
     var body: some View {
         GeometryReader { geometry in // geometry is a GeometryProxy
             VStack {
-                AsyncImage(url: photoViewModel.getThumbnailURL(forIntentSize: geometry.size)) { image in
-                    image
-                        .resizable()
-                        .scaledToFit()
-//                        .aspectRatio(contentMode: .fit)
-                } placeholder: {
-                    ProgressView()
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                // smoother, but no GIF support
+                //                AsyncImage(url: photoViewModel.getThumbnailURL(forIntentSize: geometry.size)) { image in
+                //                    image
+                //                        .resizable()
+                //                        .scaledToFit()
+                //                        .aspectRatio(contentMode: .fit)
+                //                } placeholder: {
+                //                    ProgressView()
+                //                }
+                //                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                //                WebImage (url: photoViewModel.getThumbnailURL(forIntentSize: geometry.size)) { image in
+                //                    image
+                //                        .resizable()
+                //                        .scaledToFit()
+                //                        .aspectRatio(contentMode: .fit)
+                //                } placeholder: {
+                //                    ProgressView()
+                //                }
+                //                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                KFImage
+                    .url(photoViewModel.getThumbnailURL(forIntentSize: geometry.size))
+                    .placeholder { _ in
+                        ProgressView()
+                    }
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            
         }
         
     }
 }
 
 #Preview {
-    let viewModel = BlogPostsViewModel(blogId: "pitchersandpoets.tumblr.com")
-    BlogPhotosView(viewModel)
+    let viewModel = PhotoGridViewModel(blogId: "pitchersandpoets.tumblr.com")
+    PhotoGridView(viewModel)
 }

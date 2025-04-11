@@ -4,7 +4,7 @@ import Dependencies
 
 @MainActor
 @Observable
-class BlogPostsViewModel {
+class PhotoGridViewModel {
     @ObservationIgnored @Dependency(\.tumblrClient) private var tumblrClient
     @ObservationIgnored @Dependency(\.router) private var router
     
@@ -41,9 +41,9 @@ class BlogPostsViewModel {
         var debugDescription: String {
             switch self {
             case .scrolledToBottom:
-                return "Scrolled to bottom"
+                return "scrolledToBottom"
             case .selectedPhoto(let photo):
-                return "Selected photo: \(photo.photo.originalSize?.url.absoluteString ?? "no url")"
+                return "selectedPhoto: \(photo.photo.originalSize?.url.absoluteString ?? "no url")"
             }
         }
     }

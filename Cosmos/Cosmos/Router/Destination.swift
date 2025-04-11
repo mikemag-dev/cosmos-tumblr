@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum Destination: Codable, Hashable {
+enum Destination: Hashable {
     case blogPhotos(blogId: String)
     case photo(photoViewModel: PhotoViewModel)
 
@@ -9,7 +9,7 @@ enum Destination: Codable, Hashable {
     var view: some View {
         switch self {
         case .blogPhotos(let blogId):
-            BlogPhotosView(.init(blogId: blogId))
+            PhotoGridView(.init(blogId: blogId))
         case .photo(let photoViewModel):
             PhotoView(photoViewModel: photoViewModel)
         }

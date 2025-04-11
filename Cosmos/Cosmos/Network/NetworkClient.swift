@@ -57,7 +57,8 @@ class NetworkClient {
             throw NetworkError.invalidResponse
         }
 
-        try! await Task.sleep(for: .seconds(1))
+        // comment in for testing delay
+//        try! await Task.sleep(for: .seconds(1))
         
         do {
             return try! decoder.decode(Response.self, from: data)
