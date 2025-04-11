@@ -56,7 +56,7 @@ class PhotoViewModel: Identifiable, Equatable, Hashable {
     }
     
     func send(_ event: Event) {
-        print("\(Self.self) event received \(event)")
+//        print("\(Self.self) event received \(event)")
         switch event {
         case .imageScrolledIn:
             delayedPreFetch()

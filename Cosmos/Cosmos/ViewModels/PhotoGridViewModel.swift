@@ -9,7 +9,7 @@ class PhotoGridViewModel {
     @ObservationIgnored @Dependency(\.router) private var router
     
     static let pageSize = 20
-
+    
     let paginator: Paginator<GetPostsResponse>
     private(set) var photoViewModels: [PhotoViewModel] = []
     private let blogId: String
@@ -21,7 +21,7 @@ class PhotoGridViewModel {
         }
     }
     // MARK: - Initialization
-
+    
     init(blogId: String) {
         self.blogId = blogId
         self.paginator = Paginator(pageSize: Self.pageSize) { offset async throws in
@@ -31,9 +31,9 @@ class PhotoGridViewModel {
         }
         setUpPaginationStream()
     }
-
+    
     // MARK: - State Machine
-
+    
     enum Event: CustomDebugStringConvertible {
         case scrolledToBottom
         case selectedPhoto(photo: PhotoViewModel)
@@ -74,7 +74,7 @@ class PhotoGridViewModel {
             router.path.append((.photo(photoViewModel: photoViewModel)))
         }
     }
-
+    
     // MARK: - Private Helper Methods
     private func setUpPaginationStream() {
         paginator.datasPublisher
@@ -106,18 +106,18 @@ class PhotoGridViewModel {
         state = .loading
         
         let request = GetPostsRequest(blogId: blogId, type: .photo, offset: offset, pageSize: pageSize)
-
+        
         do {
             print("fetching posts")
             let posts = try await tumblrClient.getPosts(request).response.posts
             print("Successfully fetched \(posts.count) posts.")
-
+            
             let extractPhotos = extractPhotos(from: posts)
             print("Extracted \(extractPhotos.count) image URLs.")
-
+            
             self.photoViewModels = extractPhotos
             self.state = .loaded
-
+            
         } catch {
             print("Error fetching posts: \(error.localizedDescription)")
         }

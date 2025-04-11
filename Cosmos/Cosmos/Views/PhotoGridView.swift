@@ -25,47 +25,74 @@ struct PhotoGridView: View {
             ProgressView()
                 .padding(.bottom, 10)
                 .frame(maxWidth: .infinity)
+                // detects if loading spinner is on screen
+                // necessary for pinching since the prefetching does not always hit
+                .onGeometryChange(for: Bool.self) { proxy in
+                    let frame = proxy.frame(in: .scrollView)
+                    let bounds = proxy.bounds(of: .scrollView) ?? .zero
+                    let intersection = frame.intersection(
+                        CGRect(origin: .zero, size: bounds.size))
+                    let visibleHeight = intersection.size.height
+                    return (visibleHeight / frame.size.height) > 0.75
+                } action: { isVisible in
+                    if isVisible {
+                        viewModel.send(.scrolledToBottom)
+                    }
+                }
+
         case .error, .loadedComplete:
             let _ = 0
         }
     }
     
-    var photosList: some View {
-        ScrollView {
-            LazyVGrid(columns: columns) {
-                ForEach(viewModel.photoViewModels) { photoViewModel in
-                    PhotoView(photoViewModel: photoViewModel)
-                        .frame(height: 200)
-                        .onTapGesture {
-                            viewModel.send(.selectedPhoto(photo: photoViewModel))
-                        }
-                        .onAppear {
-                            // start loading next page with 4 rows remaining
-                            let lookaheadCount = numColumns * 5
-                            if viewModel.photoViewModels.count > lookaheadCount {
-                                let nearBottomIndex = viewModel.photoViewModels.count - lookaheadCount - 1
-                                if photoViewModel == viewModel.photoViewModels[nearBottomIndex] {
-                                    viewModel.send(.scrolledToBottom)
-                                }
-                            } else {
-                                viewModel.send(.scrolledToBottom)
-                            }
-                            photoViewModel.send(.imageScrolledIn)
-                        }.onDisappear {
-                            photoViewModel.send(.imageScrolledOut)
-                        }
-                }
-                let toFill = numColumns - (viewModel.photoViewModels.count % numColumns)
-                let _ = print("toFill \(toFill)")
-                ForEach(0..<toFill, id: \.self) { _ in
-                    Color.clear
-                }
-                Color.clear
-                loadingMoreSpinnerRow
-                Color.clear
+    func photoView(for photoViewModel: PhotoViewModel) -> some View {
+        PhotoView(photoViewModel: photoViewModel)
+            .onTapGesture {
+                viewModel.send(.selectedPhoto(photo: photoViewModel))
             }
+            .onAppear {
+                // start loading next page with 4 rows remaining
+                let lookaheadCount = numColumns * 5
+                if viewModel.photoViewModels.count > lookaheadCount {
+                    let nearBottomIndex = viewModel.photoViewModels.count - lookaheadCount - 1
+                    if photoViewModel == viewModel.photoViewModels[nearBottomIndex] {
+                        viewModel.send(.scrolledToBottom)
+                    }
+                } else {
+                    viewModel.send(.scrolledToBottom)
+                }
+                photoViewModel.send(.imageScrolledIn)
+            }.onDisappear {
+                photoViewModel.send(.imageScrolledOut)
+            }
+    }
+    
+    var photosList: some View {
+        GeometryReader { proxy in
+            let dim = proxy.size.width / CGFloat(numColumns)
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 0) {
+                    ForEach(viewModel.photoViewModels) { photoViewModel in
+                        photoView(for: photoViewModel)
+                            .frame(width: dim, height: dim)
+                    }
+                }
+                loadingMoreSpinnerRow
+            }
+            .scrollIndicators(.hidden)
+            .gesture(
+                MagnificationGesture()
+                    .onEnded { value in
+                        withAnimation {
+                            if value > 0.8 {
+                                numColumns = min(numColumns + 1, 5)
+                            } else if value < 1.2 {
+                                numColumns = max(numColumns - 1, 1)
+                            }
+                        }
+                    }
+            )
         }
-        .scrollIndicators(.hidden)
     }
 
     var body: some View {
